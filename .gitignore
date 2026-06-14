@@ -1,0 +1,64 @@
+
+## --- .NET Core / General ---
+bin/
+obj/
+out/
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- Visual Studio ---
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.cache
+*.opendb
+
+## --- Visual Studio Code ---
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## --- Rider (JetBrains) ---
+.idea/
+*.sln.iml
+
+## --- MAUI / Mobile Specific ---
+# Android
+.gradle/
+build/
+captures/
+*.apk
+*.aab
+local.properties
+
+# iOS / MacCatalyst
+*.moved-aside
+*.xcuserstate
+DerivedData/
+*.ipa
+*.app
+
+# Windows (WinUI)
+AppPackages/
+*.msix
+*.msixbundle
+
+## --- NuGet ---
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+## --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## --- Environment / Secrets ---
+.env
+*.usersecrets
+appsettings.Development.json
