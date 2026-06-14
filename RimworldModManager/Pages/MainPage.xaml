@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.MainPage"
+             x:Name="ThisPage"
+             BackgroundColor="#0A0A0A">
+
+    <AbsoluteLayout>
+
+        <ScrollView x:Name="MainScrollView"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Шапка поиска -->
+                <VerticalStackLayout Padding="16,16,16,8"
+                                     Spacing="12"
+                                     BackgroundColor="#0A0A0A">
+
+                    <Grid ColumnDefinitions="48,*,48">
+                        <BoxView Grid.Column="0" Color="Transparent" />
+                        <Label x:Name="TitleLabel"
+                               Grid.Column="1"
+                               Text="RIMWORLD MOD MANAGER"
+                               FontSize="18" FontAttributes="Bold"
+                               TextColor="#00FF7F"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+                        <Button x:Name="ThemeButton"
+                                Grid.Column="2"
+                                Text="🎨"
+                                Clicked="OnThemeClicked"
+                                BackgroundColor="#141414"
+                                TextColor="#00FF7F"
+                                BorderColor="#00FF7F" BorderWidth="1"
+                                CornerRadius="8"
+                                HeightRequest="40" WidthRequest="40"
+                                FontSize="16" Padding="0" />
+                    </Grid>
+
+                    <Frame x:Name="SearchFrame"
+                           BackgroundColor="#141414" BorderColor="#00FF7F"
+                           CornerRadius="10" Padding="14">
+                        <VerticalStackLayout Spacing="10">
+                            <Label x:Name="SearchLabel"
+                                   Text="Поиск мода" TextColor="#00FF7F" FontSize="13" />
+                            <Entry x:Name="SearchEntry"
+                                   Placeholder="Введите название..."
+                                   PlaceholderColor="#555"
+                                   TextColor="White"
+                                   BackgroundColor="#1E1E1E"
+                                   Text="{Binding Main.ModName}"
+                                   ReturnType="Search"
+                                   ReturnCommand="{Binding Main.GenerateCommand}" />
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                <Button x:Name="FindButton"
+                                        Grid.Column="0"
+                                        Text="Найти"
+                                        Command="{Binding Main.GenerateCommand}"
+                                        BackgroundColor="#00FF7F"
+                                        TextColor="#0A0A0A"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8" HeightRequest="54" />
+                                <Button x:Name="FavoriteButton"
+                                        Grid.Column="1"
+                                        Text="💚"
+                                        Command="{Binding Main.AddToFavoritesCommand}"
+                                        BackgroundColor="#141414"
+                                        TextColor="#00FF7F"
+                                        BorderColor="#00FF7F" BorderWidth="1"
+                                        CornerRadius="8" HeightRequest="54" WidthRequest="60"
+                                        FontSize="22" />
+                                <Button Grid.Column="2"
+                                        Text="🕐"
+                                        Command="{Binding Main.ToggleHistoryCommand}"
+                                        BackgroundColor="#1E1E1E"
+                                        TextColor="#888"
+                                        BorderColor="#333" BorderWidth="1"
+                                        CornerRadius="8" HeightRequest="54" WidthRequest="60"
+                                        FontSize="22" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                </VerticalStackLayout>
+
+                <!-- История -->
+                <Frame x:Name="HistoryFrame"
+                       IsVisible="{Binding Main.HistoryVisible}"
+                       BackgroundColor="#141414" BorderColor="#333"
+                       CornerRadius="10" Padding="12"
+                       Margin="16,0,16,8">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label x:Name="HistoryLabel"
+                                   Grid.Column="0" Text="История"
+                                   TextColor="#888" FontSize="13" />
+                            <Button Grid.Column="1" Text="Очистить"
+                                    Command="{Binding Main.ClearHistoryCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#555" FontSize="12"
+                                    HeightRequest="28" Padding="8,0" />
+                        </Grid>
+                        <CollectionView ItemsSource="{Binding Main.History}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Text="{Binding .}"
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Main.SelectHistoryCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent"
+                                            TextColor="#AAAAAA" FontSize="13"
+                                            HorizontalOptions="Start"
+                                            Padding="0,6" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Загрузка -->
+                <ActivityIndicator IsVisible="{Binding Main.IsLoading}"
+                                   IsRunning="{Binding Main.IsLoading}"
+                                   Color="#00FF7F"
+                                   HeightRequest="40"
+                                   Margin="0,8,0,0" />
+
+                <!-- Заголовок результатов -->
+                <Label x:Name="ResultsLabel"
+                       IsVisible="{Binding Main.ResultsVisible}"
+                       Text="🎮 Результаты Steam Workshop"
+                       TextColor="#00FF7F" FontSize="14" FontAttributes="Bold"
+                       Margin="16,8,16,8" />
+
+                <!-- Карточки 3 в ряд -->
+                <CollectionView ItemsSource="{Binding Main.SteamResults}"
+                                IsVisible="{Binding Main.ResultsVisible}"
+                                Margin="12,0,12,80">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="3"
+                                         HorizontalItemSpacing="8"
+                                         VerticalItemSpacing="8" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                                   BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Border}"
+                                   CornerRadius="12" Padding="0"
+                                   HasShadow="False">
+                                <Grid RowDefinitions="130,Auto,60,34,30,30">
+
+                                    <!-- Фото -->
+                                    <Image Grid.Row="0"
+                                           Source="{Binding PreviewUrl}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="130" />
+
+                                    <!-- Название -->
+                                    <Frame Grid.Row="1"
+                                           BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.CardAlt}"
+                                           BorderColor="Transparent"
+                                           Padding="8,6" Margin="0" CornerRadius="0">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                               FontSize="12" FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="2"
+                                               HorizontalTextAlignment="Center" />
+                                    </Frame>
+
+                                    <!-- Описание -->
+                                    <Frame Grid.Row="2"
+                                           BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                                           BorderColor="Transparent"
+                                           Padding="8,6" Margin="0" CornerRadius="0">
+                                        <Label Text="{Binding Description}"
+                                               TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                                               FontSize="10"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="4" />
+                                    </Frame>
+
+                                    <!-- Steam -->
+                                    <Button Grid.Row="3"
+                                            Text="🎮 Steam"
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Main.OpenSteamModCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}"
+                                            FontAttributes="Bold"
+                                            FontSize="11" CornerRadius="0"
+                                            HeightRequest="34" Margin="0" />
+
+                                    <!-- top-mods -->
+                                    <Button Grid.Row="4"
+                                            Text="🌐 top-mods.ru"
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Main.OpenTopModsModCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.CardAlt}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                            FontSize="10" CornerRadius="0"
+                                            HeightRequest="30" Margin="0" />
+
+                                    <!-- Google/playground -->
+                                    <Button Grid.Row="5"
+                                            Text="🔍 playground (Google)"
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Main.OpenPlaygroundModCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                            FontSize="10" CornerRadius="0"
+                                            HeightRequest="30" Margin="0" />
+
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Кнопка наверх -->
+        <Button x:Name="ScrollTopBtn"
+                Text="↑"
+                Clicked="OnScrollTopClicked"
+                BackgroundColor="#141414"
+                TextColor="#00FF7F"
+                BorderColor="#00FF7F" BorderWidth="1"
+                CornerRadius="24"
+                HeightRequest="48" WidthRequest="48"
+                FontSize="20" FontAttributes="Bold"
+                AbsoluteLayout.LayoutBounds="1,1,48,48"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Margin="0,0,20,20" />
+
+    </AbsoluteLayout>
+</ContentPage>

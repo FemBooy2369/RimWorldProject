@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:RimworldModManager.Pages"
+       x:Class="RimworldModManager.AppShell"
+       Shell.NavBarIsVisible="False"
+       BackgroundColor="#0A0A0A">
+
+    <TabBar>
+        <ShellContent Title="Поиск"
+                      Icon="icon_search.png"
+                      ContentTemplate="{DataTemplate pages:MainPage}"
+                      Route="MainPage" />
+        <ShellContent Title="Избранное"
+                      Icon="icon_star.png"
+                      ContentTemplate="{DataTemplate pages:FavoritesPage}"
+                      Route="FavoritesPage" />
+        <ShellContent Title="Мои моды"
+                      Icon="icon_folder.png"
+                      ContentTemplate="{DataTemplate pages:MyModsPage}"
+                      Route="MyModsPage" />
+    </TabBar>
+</Shell>
