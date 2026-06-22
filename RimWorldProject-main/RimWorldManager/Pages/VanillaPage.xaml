@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.VanillaPage"
+             x:Name="ThisPage"
+             BackgroundColor="{Binding Theme.Background}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16" RowSpacing="12">
+
+        <Label Grid.Row="0" Text="🌿 Vanilla Expanded Mods" FontSize="22" FontAttributes="Bold"
+               TextColor="{Binding Theme.Accent}" HorizontalOptions="Center" />
+
+        <Frame Grid.Row="1" BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}" 
+               CornerRadius="12" Padding="12">
+            <Entry x:Name="VanillaSearchEntry" Placeholder="Поиск по имени или описанию..."
+                   PlaceholderColor="{Binding Theme.TextMuted}" TextColor="{Binding Theme.TextPrimary}"
+                   BackgroundColor="{Binding Theme.Input}" TextChanged="OnVanillaSearchChanged" />
+        </Frame>
+
+        <VerticalStackLayout Grid.Row="2" x:Name="LoadingContainer" Spacing="12" IsVisible="True">
+            <Label x:Name="LoadingLabel" Text="Загрузка модов с GitHub + Steam..." 
+                   TextColor="{Binding Theme.TextMuted}" HorizontalOptions="Center" FontSize="14" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="3" x:Name="VanillaRefreshView" RefreshColor="{Binding Theme.Accent}">
+            <CollectionView x:Name="ModsCollection" IsVisible="False">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="8" VerticalItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                               BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                               CornerRadius="12" Padding="0" Margin="0,0,0,8" HasShadow="True">
+                            <Grid ColumnDefinitions="0.45*,0.55*">
+                                <Grid Grid.Column="0" RowDefinitions="*,Auto">
+                                    <Image Grid.Row="0" Source="{Binding PreviewUrl}" HeightRequest="125" Aspect="AspectFill" />
+                                    <Frame Grid.Row="1" BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                           Padding="6,5" CornerRadius="0">
+                                        <Label Text="{Binding Name}" TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                               FontSize="11" FontAttributes="Bold" LineBreakMode="TailTruncation" MaxLines="2"
+                                               HorizontalTextAlignment="Center" />
+                                    </Frame>
+                                </Grid>
+                                <Grid Grid.Column="1" RowDefinitions="*,Auto,Auto">
+                                    <Frame Grid.Row="0" BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.CardAlt}"
+                                           Padding="10,8" CornerRadius="0">
+                                        <Label Text="{Binding Description}" TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                                               FontSize="10" LineBreakMode="TailTruncation" MaxLines="5" />
+                                    </Frame>
+                                    <Frame Grid.Row="1" BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                           Padding="6,4" CornerRadius="0" HorizontalOptions="Start">
+                                        <Label Text="{Binding Compatibility}" TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                               FontSize="10" FontAttributes="Bold" />
+                                    </Frame>
+                                    <Button Grid.Row="2" Text="🐙 GitHub" Clicked="OnGithubClicked" 
+                                            CommandParameter="{Binding HtmlUrl}"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}"
+                                            FontSize="12" HeightRequest="42" />
+                                </Grid>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

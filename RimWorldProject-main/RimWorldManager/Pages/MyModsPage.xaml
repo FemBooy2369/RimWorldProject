@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.MyModsPage"
+             x:Name="ThisPage"
+             BackgroundColor="{Binding Theme.Background}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16" RowSpacing="12">
+
+        <Label Grid.Row="0" Text="📁 Мои моды" FontSize="24" FontAttributes="Bold"
+               TextColor="{Binding Theme.Accent}" HorizontalOptions="Center" />
+
+        <Frame Grid.Row="1" BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}" 
+               CornerRadius="16" Padding="16">
+            <Button Text="Выбрать папку Mods" Clicked="OnSelectFolderClicked"
+                    BackgroundColor="{Binding Theme.Accent}" 
+                    TextColor="{Binding Theme.BtnText}"
+                    BorderColor="{Binding Theme.Accent}"
+                    CornerRadius="8" />
+        </Frame>
+
+        <RefreshView Grid.Row="2" x:Name="RefreshView" RefreshColor="{Binding Theme.Accent}">
+            <CollectionView x:Name="MyModsCollection" ItemsSource="{Binding Mods.Mods}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="12" VerticalItemSpacing="12" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                               BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                               CornerRadius="16" Padding="12" HasShadow="True">
+
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold"
+                                       TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}" />
+
+                                <Label Text="{Binding Author}" FontSize="12" 
+                                       TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}" />
+
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding Version}" FontSize="12" 
+                                           TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}" />
+                                    <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                           Padding="8,4" CornerRadius="6" HorizontalOptions="End">
+                                        <Label Text="{Binding Compatibility}" FontSize="11" FontAttributes="Bold"
+                                               TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}" />
+                                    </Frame>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

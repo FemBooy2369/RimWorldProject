@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.FavoritesPage"
+             x:Name="ThisPage"
+             BackgroundColor="{Binding Theme.Background}">
+
+    <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
+
+        <Label Grid.Row="0" Text="❤️ Избранное" FontSize="24" FontAttributes="Bold"
+               TextColor="{Binding Theme.Accent}" HorizontalOptions="Center" />
+
+        <RefreshView Grid.Row="1" RefreshColor="{Binding Theme.Accent}">
+            <CollectionView x:Name="FavoritesCollection" ItemsSource="{Binding Favorites.Favorites}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2"
+                                     HorizontalItemSpacing="12" VerticalItemSpacing="16" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                         Spacing="12" Margin="0,60,0,0">
+                        <Label Text="🎮" FontSize="48" HorizontalOptions="Center" />
+                        <Label Text="Избранное пусто" FontSize="18" FontAttributes="Bold"
+                               TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                               HorizontalOptions="Center" />
+                        <Label Text="Добавляй моды через поиск ❤️" FontSize="14"
+                               TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                               BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                               CornerRadius="16" Padding="0" HasShadow="True" Margin="0">
+                            <VerticalStackLayout Spacing="0">
+
+                                <Grid HeightRequest="140">
+                                    <Image Aspect="AspectFill">
+                                        <Image.Source>
+                                            <Binding Path="PreviewUrl"
+                                                     FallbackValue="no_image_placeholder.png"
+                                                     TargetNullValue="no_image_placeholder.png" />
+                                        </Image.Source>
+                                        <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding PreviewUrl}" Value="">
+                                                <Setter Property="Source" Value="no_image_placeholder.png" />
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <BoxView VerticalOptions="End" HeightRequest="55"
+                                             Color="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                             Opacity="0.82" />
+                                    <Label Text="{Binding Title}"
+                                           FontSize="14" FontAttributes="Bold"
+                                           TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                           LineBreakMode="TailTruncation" MaxLines="2"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalOptions="End"
+                                           Margin="8,0,8,8" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="6" Padding="10,10">
+                                    <Button Grid.Column="0" Text="🚂 Steam"
+                                            CommandParameter="{Binding .}" Clicked="OnSteamClicked"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}"
+                                            FontSize="12" CornerRadius="8" />
+                                    <Button Grid.Column="1" Text="🌐 Nexus"
+                                            CommandParameter="{Binding .}" Clicked="OnNexusClicked"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentSecondary}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}"
+                                            FontSize="12" CornerRadius="8" />
+                                    <Button Grid.Column="2" Text="🗑️"
+                                            CommandParameter="{Binding .}" Clicked="OnRemoveFavoriteClicked"
+                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                            FontSize="16" WidthRequest="46" CornerRadius="8" />
+                                </Grid>
+
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

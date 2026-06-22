@@ -1,0 +1,10 @@
+<api type="debug" assembly-name="RimWorldModManager" mvid="44646b9b8eab4023a2e78ab567b43838">
+  <java-to-managed>
+    <entry java-name="crc64549ca920a4ead738/MainActivity" managed-name="RimWorldManager.MainActivity, RimWorldModManager" managed-type-token-id="33554442" />
+    <entry java-name="crc64549ca920a4ead738/MainApplication" managed-name="RimWorldManager.MainApplication, RimWorldModManager" managed-type-token-id="33554443" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc64549ca920a4ead738/MainActivity" managed-name="RimWorldManager.MainActivity, RimWorldModManager" managed-type-token-id="33554442" />
+    <entry java-name="crc64549ca920a4ead738/MainApplication" managed-name="RimWorldManager.MainApplication, RimWorldModManager" managed-type-token-id="33554443" />
+  </managed-to-java>
+</api>

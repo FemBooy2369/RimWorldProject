@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.MainPage"
+             x:Name="ThisPage"
+             BackgroundColor="{Binding Theme.Background}">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16" RowSpacing="16">
+
+        <Frame Grid.Row="0" BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}" 
+               CornerRadius="16" Padding="16">
+            <VerticalStackLayout Spacing="12">
+                <Picker x:Name="CategoryPicker" 
+                        Title="Выберите категорию"
+                        TextColor="{Binding Theme.TextPrimary}"
+                        BackgroundColor="{Binding Theme.Input}"
+                        TitleColor="{Binding Theme.TextMuted}"
+                        SelectedIndexChanged="OnCategoryChanged" />
+                <HorizontalStackLayout Spacing="12">
+                    <Entry x:Name="SearchEntry" Placeholder="Название мода или ключевые слова..." 
+                           PlaceholderColor="{Binding Theme.TextMuted}" TextColor="{Binding Theme.TextPrimary}"
+                           BackgroundColor="{Binding Theme.Input}" FontSize="17" HorizontalOptions="FillAndExpand" />
+                    <Button Text="🔎 Найти" Clicked="OnFindButtonClicked"
+                            BackgroundColor="{Binding Theme.Accent}" TextColor="{Binding Theme.BtnText}" 
+                            FontSize="17" WidthRequest="100" CornerRadius="8" />
+                    <Button x:Name="ThemeButton" Text="🎨" Clicked="OnThemeClicked"
+                            BackgroundColor="{Binding Theme.AccentSecondary}" 
+                            TextColor="{Binding Theme.BtnText}" 
+                             FontSize="17" WidthRequest="50" CornerRadius="8" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
+        <HorizontalStackLayout Grid.Row="1" Spacing="8" HorizontalOptions="Center">
+            <Frame BackgroundColor="{Binding Theme.Accent}" Padding="16,12" CornerRadius="12" WidthRequest="138">
+                <Label Text="{Binding Main.FavoritesCount, StringFormat='❤️ {0}'}" 
+                       TextColor="{Binding Theme.BtnText}" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center"/>
+            </Frame>
+            <Frame BackgroundColor="{Binding Theme.AccentDark}" Padding="16,12" CornerRadius="12" WidthRequest="138">
+                <Label Text="{Binding Main.MyModsCount, StringFormat='📁 {0}'}" 
+                       TextColor="{Binding Theme.TextPrimary}" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center"/>
+            </Frame>
+            <Frame BackgroundColor="{Binding Theme.AccentLight}" Padding="16,12" CornerRadius="12" WidthRequest="138">
+                <Label Text="{Binding Main.RadarCount, StringFormat='🛰️ {0}'}" 
+                       TextColor="{Binding Theme.TextPrimary}" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center"/>
+            </Frame>
+        </HorizontalStackLayout>
+
+        <RefreshView Grid.Row="2" x:Name="RefreshView" RefreshColor="{Binding Theme.Accent}">
+            <ScrollView>
+                <VerticalStackLayout Spacing="20">
+                    <Label x:Name="ResultsLabel" Text="Результаты поиска" FontSize="18" FontAttributes="Bold"
+                           TextColor="{Binding Theme.Accent}" />
+                    <CollectionView x:Name="ModsCollection" ItemsSource="{Binding Main.SteamResults}">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="12" VerticalItemSpacing="16" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Card}"
+                                       BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                       CornerRadius="16" Padding="0" HasShadow="True">
+                                    <VerticalStackLayout Spacing="0">
+                                        <Grid>
+                                            <Image Source="{Binding PreviewUrl}" HeightRequest="160" Aspect="AspectFill">
+                                                <Image.Triggers>
+                                                    <DataTrigger TargetType="Image" Binding="{Binding PreviewUrl}" Value="">
+                                                        <Setter Property="Source" Value="no_image_placeholder.png" />
+                                                    </DataTrigger>
+                                                </Image.Triggers>
+                                            </Image>
+                                            <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                                   Padding="10,6" VerticalOptions="End" HasShadow="True">
+                                                <Label Text="{Binding Title}" 
+                                                       TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                                       FontSize="15" FontAttributes="Bold" 
+                                                       LineBreakMode="TailTruncation" MaxLines="2"
+                                                       HorizontalTextAlignment="Center" />
+                                            </Frame>
+                                        </Grid>
+                                        <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.CardAlt}" Padding="14">
+                                            <Label Text="{Binding Description}" 
+                                                   TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                                                   FontSize="13" LineBreakMode="TailTruncation" MaxLines="5" />
+                                        </Frame>
+                                        <HorizontalStackLayout Spacing="6" Padding="12">
+                                            <Button Text="🚂 Steam" Clicked="OnSteamClicked" CommandParameter="{Binding Url}"
+                                                    BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                                    TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}" 
+                                                    FontSize="13" HorizontalOptions="FillAndExpand" CornerRadius="8" />
+                                            <Button Text="🌐 Nexus" Clicked="OnNexusClicked" CommandParameter="{Binding Title}"
+                                                    BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentSecondary}"
+                                                    TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}" 
+                                                    FontSize="13" HorizontalOptions="FillAndExpand" CornerRadius="8" />
+                                            <Button Text="❤️" Clicked="OnAddToFavoritesClicked" CommandParameter="{Binding .}"
+                                                    BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.AccentDark}"
+                                                    TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                                    FontSize="19" WidthRequest="52" CornerRadius="8" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+
+        <Frame Grid.Row="3" BackgroundColor="{Binding Theme.Card}" Padding="12" CornerRadius="12" BorderColor="{Binding Theme.Accent}">
+            <Label Text="RimWorld Mod Manager v3 beta" 
+                   TextColor="{Binding Theme.TextMuted}" 
+                   FontSize="13" HorizontalOptions="Center" FontAttributes="Italic" />
+        </Frame>
+
+    </Grid>
+</ContentPage>

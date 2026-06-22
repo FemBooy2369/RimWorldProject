@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    @file RadarPage.xaml
+    @brief Страница Mod Radar — главный разведывательный центр колонии.
+    @details Содержит 6 секций + улучшенная кнопка ❤️ у Мода дня
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RimworldModManager.Pages.RadarPage"
+             x:Name="ThisPage"
+             BackgroundColor="{Binding Theme.Background}">
+
+    <!-- Корневая сетка -->
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="16">
+
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="12">
+            <Label Text="🛰️ Mod Radar — Разведка колонии"
+                   FontSize="26" FontAttributes="Bold"
+                   TextColor="{Binding Theme.Accent}" HorizontalOptions="Center"/>
+
+            <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                <Frame BackgroundColor="{Binding Theme.Accent}" Padding="18,10" CornerRadius="12">
+                    <Label Text="{Binding Radar.FavoritesCount, StringFormat='❤️ Избранное: {0}'}"
+                           TextColor="{Binding Theme.BtnText}" FontAttributes="Bold" FontSize="16"/>
+                </Frame>
+                <Frame BackgroundColor="{Binding Theme.AccentDark}" Padding="18,10" CornerRadius="12">
+                    <Label Text="{Binding Radar.MyModsCount, StringFormat='📁 Мои моды: {0}'}"
+                           TextColor="{Binding Theme.TextPrimary}" FontAttributes="Bold" FontSize="16"/>
+                </Frame>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Основной контент -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20">
+
+                <!-- ====================== Мод дня ====================== -->
+                <Frame BackgroundColor="{Binding Theme.Card}"
+                       BorderColor="{Binding Theme.AccentSecondary}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="🎲 Мод дня" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{Binding Theme.AccentSecondary}"
+                                   VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+                            <Button x:Name="RerollButton" Text="🔀" Clicked="OnRerollClicked"
+                                    BackgroundColor="{Binding Theme.CardAlt}"
+                                    TextColor="{Binding Theme.AccentSecondary}"
+                                    FontSize="18" WidthRequest="48" HeightRequest="40"
+                                    CornerRadius="8" Padding="0"/>
+                        </HorizontalStackLayout>
+
+                        <ActivityIndicator x:Name="ModDayLoader" IsRunning="False" IsVisible="False"
+                                           Color="{Binding Theme.Accent}" HeightRequest="32"/>
+
+                        <Grid x:Name="ModDayContent" ColumnDefinitions="160,*" ColumnSpacing="14">
+                            <Image x:Name="ModDayImage" Grid.Column="0"
+                                   HeightRequest="110" Aspect="AspectFill" Source="no_image.jpg">
+                                <Image.Clip>
+                                    <RoundRectangleGeometry CornerRadius="10" Rect="0,0,160,110"/>
+                                </Image.Clip>
+                            </Image>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                <Label x:Name="ModDayTitle" Text="Загрузка..."
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"
+                                       LineBreakMode="TailTruncation" MaxLines="2"/>
+
+                                <Label x:Name="ModDayDesc" Text=""
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"
+                                       LineBreakMode="TailTruncation" MaxLines="3"/>
+
+                                <!-- Кнопки действий -->
+                                <HorizontalStackLayout Spacing="8">
+                                    <Button x:Name="ModDayButton" Text="🚂 Открыть в Steam"
+                                            Clicked="OnModDaySteamClicked"
+                                            BackgroundColor="{Binding Theme.Accent}"
+                                            TextColor="{Binding Theme.BtnText}"
+                                            FontSize="13" CornerRadius="8" 
+                                            HorizontalOptions="FillAndExpand"/>
+
+                                    <!-- ❤️ Кнопка Избранное -->
+                                    <Button Text="❤️" Clicked="OnModDayFavClicked"
+                                            BackgroundColor="{Binding Theme.AccentDark}"
+                                            TextColor="{Binding Theme.Accent}"
+                                            FontSize="18" WidthRequest="52" HeightRequest="42"
+                                            CornerRadius="8" Padding="0"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ====================== DNA Колонии ====================== -->
+                <Frame BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="🧬 DNA Колонии" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{Binding Theme.Accent}"
+                                   VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+                            <Button Text="🔄" Clicked="OnDnaRefreshClicked"
+                                    BackgroundColor="{Binding Theme.CardAlt}"
+                                    TextColor="{Binding Theme.Accent}"
+                                    FontSize="18" WidthRequest="48" HeightRequest="40"
+                                    CornerRadius="8" Padding="0"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Анализ твоего избранного — твой игровой профиль"
+                               FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}"
+                               BorderColor="{Binding Theme.Border}" CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="10">
+                                <Label x:Name="DnaArchetypeLabel"
+                                       Text="🎮 Добавь моды в избранное для анализа"
+                                       FontSize="18" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.Accent}" HorizontalOptions="Center"/>
+
+                                <VerticalStackLayout Spacing="8">
+                                    <!-- Combat -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="⚔️ Combat" FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaCombatPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaCombatBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- QoL -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="✨ QoL / UI" FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaQolPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaQolBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Graphics -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="🎨 Graphics" FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaGraphicsPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaGraphicsBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Performance -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="⚡ Performance" FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaPerfPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaPerfBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Vanilla -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="🌿 Vanilla Exp." FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaVanillaPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaVanillaBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Overhaul -->
+                                    <VerticalStackLayout Spacing="4">
+                                        <HorizontalStackLayout>
+                                            <Label Text="🏗️ Overhaul" FontSize="13"
+                                                   TextColor="{Binding Theme.TextPrimary}" WidthRequest="140"/>
+                                            <Label x:Name="DnaOverhaulPct" Text="0%"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{Binding Theme.Accent}"/>
+                                        </HorizontalStackLayout>
+                                        <ProgressBar x:Name="DnaOverhaulBar" Progress="0"
+                                                     ProgressColor="{Binding Theme.Accent}"
+                                                     BackgroundColor="{Binding Theme.Border}" HeightRequest="8"/>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ====================== Мод vs Мод ====================== -->
+                <Frame BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="⚔️ Мод vs Мод" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{Binding Theme.Accent}"
+                                   VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+                            <Button Text="🔀" Clicked="OnVsRerollClicked"
+                                    BackgroundColor="{Binding Theme.CardAlt}"
+                                    TextColor="{Binding Theme.Accent}"
+                                    FontSize="18" WidthRequest="48" HeightRequest="40"
+                                    CornerRadius="8" Padding="0"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Голосуй за лучший — победитель летит в избранное!"
+                               FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+
+                        <ActivityIndicator x:Name="VsLoader" IsRunning="False" IsVisible="False"
+                                           Color="{Binding Theme.Accent}" HeightRequest="32"/>
+
+                        <Grid x:Name="VsContent" ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
+                            <!-- Mod A -->
+                            <Frame Grid.Column="0" x:Name="ModAFrame"
+                                   BackgroundColor="{Binding Theme.CardAlt}"
+                                   BorderColor="{Binding Theme.Border}"
+                                   CornerRadius="14" Padding="10">
+                                <VerticalStackLayout Spacing="8">
+                                    <Image x:Name="ModAImage" HeightRequest="120"
+                                           Aspect="AspectFill" Source="no_image.jpg">
+                                        <Image.Clip>
+                                            <RoundRectangleGeometry CornerRadius="8" Rect="0,0,300,120"/>
+                                        </Image.Clip>
+                                    </Image>
+                                    <Label x:Name="ModATitle" Text="..."
+                                           FontSize="13" FontAttributes="Bold"
+                                           TextColor="{Binding Theme.TextPrimary}"
+                                           LineBreakMode="TailTruncation" MaxLines="2"
+                                           HorizontalTextAlignment="Center"/>
+                                    <Button x:Name="VoteAButton" Text="👍 Выбрать"
+                                            Clicked="OnVoteAClicked"
+                                            BackgroundColor="{Binding Theme.Accent}"
+                                            TextColor="{Binding Theme.BtnText}"
+                                            FontSize="13" CornerRadius="8"/>
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <Label Grid.Column="1" Text="VS"
+                                   FontSize="22" FontAttributes="Bold"
+                                   TextColor="{Binding Theme.AccentSecondary}"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+
+                            <!-- Mod B -->
+                            <Frame Grid.Column="2" x:Name="ModBFrame"
+                                   BackgroundColor="{Binding Theme.CardAlt}"
+                                   BorderColor="{Binding Theme.Border}"
+                                   CornerRadius="14" Padding="10">
+                                <VerticalStackLayout Spacing="8">
+                                    <Image x:Name="ModBImage" HeightRequest="120"
+                                           Aspect="AspectFill" Source="no_image.jpg">
+                                        <Image.Clip>
+                                            <RoundRectangleGeometry CornerRadius="8" Rect="0,0,300,120"/>
+                                        </Image.Clip>
+                                    </Image>
+                                    <Label x:Name="ModBTitle" Text="..."
+                                           FontSize="13" FontAttributes="Bold"
+                                           TextColor="{Binding Theme.TextPrimary}"
+                                           LineBreakMode="TailTruncation" MaxLines="2"
+                                           HorizontalTextAlignment="Center"/>
+                                    <Button x:Name="VoteBButton" Text="👍 Выбрать"
+                                            Clicked="OnVoteBClicked"
+                                            BackgroundColor="{Binding Theme.Accent}"
+                                            TextColor="{Binding Theme.BtnText}"
+                                            FontSize="13" CornerRadius="8"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </Grid>
+
+                        <Frame x:Name="VsResultFrame" IsVisible="False"
+                               BackgroundColor="{Binding Theme.CardAlt}"
+                               BorderColor="{Binding Theme.Accent}"
+                               CornerRadius="12" Padding="12">
+                            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                                <Label x:Name="VsResultLabel"
+                                       FontSize="15" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.Accent}"
+                                       VerticalOptions="Center"/>
+                                <Button x:Name="VsOpenSteamBtn" Text="🚂 Steam"
+                                        Clicked="OnVsWinnerSteamClicked"
+                                        BackgroundColor="{Binding Theme.Accent}"
+                                        TextColor="{Binding Theme.BtnText}"
+                                        FontSize="13" CornerRadius="8"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ====================== Квест дня ====================== -->
+                <Frame BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="🎯 Квест дня" FontSize="20" FontAttributes="Bold"
+                               TextColor="{Binding Theme.Accent}"/>
+
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}"
+                               BorderColor="{Binding Theme.Border}" CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="10">
+                                <Label x:Name="QuestTitle" Text="Загрузка квеста..."
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"/>
+                                <Label x:Name="QuestDesc" Text=""
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+                                <HorizontalStackLayout Spacing="10">
+                                    <ProgressBar x:Name="QuestProgressBar" Progress="0"
+                                                 ProgressColor="{Binding Theme.Accent}"
+                                                 BackgroundColor="{Binding Theme.Border}"
+                                                 HeightRequest="10" HorizontalOptions="FillAndExpand"/>
+                                    <Label x:Name="QuestProgressLabel" Text="0 / 0"
+                                           FontSize="13" FontAttributes="Bold"
+                                           TextColor="{Binding Theme.Accent}"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                <Frame x:Name="QuestAchieveFrame" IsVisible="False"
+                                       BackgroundColor="{Binding Theme.Accent}"
+                                       CornerRadius="10" Padding="10">
+                                    <Label x:Name="QuestAchieveLabel"
+                                           FontSize="15" FontAttributes="Bold"
+                                           TextColor="{Binding Theme.BtnText}"
+                                           HorizontalOptions="Center"/>
+                                </Frame>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ====================== Популярные ====================== -->
+                <Frame BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="12">
+                            <Label Text="🔥 Популярные моды" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{Binding Theme.Accent}"
+                                   VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+                            <Button x:Name="RefreshPopularButton" Text="↻" Clicked="OnRefreshPopularClicked"
+                                    BackgroundColor="{Binding Theme.CardAlt}"
+                                    TextColor="{Binding Theme.Accent}"
+                                    FontSize="18" WidthRequest="48" HeightRequest="40"
+                                    CornerRadius="8" Padding="0"/>
+                        </HorizontalStackLayout>
+
+                        <Picker x:Name="PopularCategoryPicker"
+                                Title="Выберите категорию"
+                                TextColor="{Binding Theme.TextPrimary}"
+                                BackgroundColor="{Binding Theme.Input}"
+                                TitleColor="{Binding Theme.TextMuted}"
+                                SelectedIndexChanged="OnPopularCategoryChanged"/>
+
+                        <ActivityIndicator x:Name="PopularLoader" IsRunning="False" IsVisible="False"
+                                           Color="{Binding Theme.Accent}" HeightRequest="32"/>
+
+                        <CollectionView x:Name="PopularCollection" HeightRequest="300" SelectionMode="None">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.CardAlt}"
+                                           BorderColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Border}"
+                                           CornerRadius="14" Padding="0" WidthRequest="200" HasShadow="True">
+                                        <VerticalStackLayout Spacing="0">
+                                            <Image Source="{Binding PreviewUrl}" HeightRequest="120" Aspect="AspectFill"/>
+                                            <VerticalStackLayout Padding="10" Spacing="4">
+                                                <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="13"
+                                                       TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextPrimary}"
+                                                       LineBreakMode="TailTruncation" MaxLines="2"/>
+                                                <Label Text="{Binding Description}" FontSize="11"
+                                                       TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.TextMuted}"
+                                                       LineBreakMode="TailTruncation" MaxLines="2"/>
+                                                <HorizontalStackLayout Spacing="6" Margin="0,4,0,0">
+                                                    <Button Text="Steam" Clicked="OnPopularSteamClicked"
+                                                            CommandParameter="{Binding Url}"
+                                                            BackgroundColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.Accent}"
+                                                            TextColor="{Binding Source={x:Reference ThisPage}, Path=BindingContext.Theme.BtnText}"
+                                                            FontSize="12" CornerRadius="6" Padding="8,4"
+                                                            HorizontalOptions="FillAndExpand"/>
+                                                    <!-- ❤️ Кнопка добавления в избранное -->
+                                                    <Button Text="❤️" Clicked="OnModDayFavClicked"
+                                            BackgroundColor="{Binding Theme.AccentDark}"
+                                            TextColor="{Binding Theme.Accent}"
+                                            FontSize="18" WidthRequest="52" HeightRequest="42"
+                                            CornerRadius="8" Padding="0"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ====================== Готовые сборки ====================== -->
+                <Label Text="📦 Готовые сборки" FontSize="20" FontAttributes="Bold"
+                       TextColor="{Binding Theme.Accent}"/>
+
+                <Frame BackgroundColor="{Binding Theme.Card}" BorderColor="{Binding Theme.Accent}"
+                       CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="14">
+                        <!-- Vanilla Expanded -->
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}" BorderColor="{Binding Theme.Border}"
+                               CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="⚔️ Vanilla Expanded — Полный набор"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"/>
+                                <Label Text="Vanilla Expanded Core, Royalty, Ideology, Biotech, Anomaly — все DLC + расширения"
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+                                <Label Text="🏷 Lore-friendly · QoL" FontSize="12" 
+                                       TextColor="{Binding Theme.AccentSecondary}"/>
+                                <Button Text="🔍 Найти в Steam Workshop" Clicked="OnBuildSteamClicked"
+                                        CommandParameter="Vanilla Expanded"
+                                        BackgroundColor="{Binding Theme.Accent}"
+                                        TextColor="{Binding Theme.BtnText}"
+                                        CornerRadius="8" FontSize="13" HorizontalOptions="Start"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Performance Pack -->
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}" BorderColor="{Binding Theme.Border}"
+                               CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="⚡ Performance Pack — Для слабых ПК"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"/>
+                                <Label Text="Performance Fish, RimThreaded — максимум FPS"
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+                                <Label Text="🏷 Performance · FPS" FontSize="12" 
+                                       TextColor="{Binding Theme.AccentSecondary}"/>
+                                <Button Text="🔍 Найти в Steam Workshop" Clicked="OnBuildSteamClicked"
+                                        CommandParameter="Performance Fish RimWorld"
+                                        BackgroundColor="{Binding Theme.Accent}"
+                                        TextColor="{Binding Theme.BtnText}"
+                                        CornerRadius="8" FontSize="13" HorizontalOptions="Start"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Visual Overhaul -->
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}" BorderColor="{Binding Theme.Border}"
+                               CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="🎨 Visual Overhaul — Красивый RimWorld"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"/>
+                                <Label Text="RimHUD, Dubs Mint Menus, Wall Light"
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+                                <Label Text="🏷 UI · Graphics" FontSize="12" 
+                                       TextColor="{Binding Theme.AccentSecondary}"/>
+                                <Button Text="🔍 Найти в Steam Workshop" Clicked="OnBuildSteamClicked"
+                                        CommandParameter="RimHUD Dubs Mint Menus"
+                                        BackgroundColor="{Binding Theme.Accent}"
+                                        TextColor="{Binding Theme.BtnText}"
+                                        CornerRadius="8" FontSize="13" HorizontalOptions="Start"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Combat Overhaul -->
+                        <Frame BackgroundColor="{Binding Theme.CardAlt}" BorderColor="{Binding Theme.Border}"
+                               CornerRadius="12" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="🔫 Combat Overhaul — Хардкорные бои"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{Binding Theme.TextPrimary}"/>
+                                <Label Text="Combat Extended, Rimmu-Nation Weapons, Yayo's Combat"
+                                       FontSize="13" TextColor="{Binding Theme.TextMuted}"/>
+                                <Label Text="🏷 Combat · Hardcore" FontSize="12" 
+                                       TextColor="{Binding Theme.AccentSecondary}"/>
+                                <Button Text="🔍 Найти в Steam Workshop" Clicked="OnBuildSteamClicked"
+                                        CommandParameter="Combat Extended RimWorld"
+                                        BackgroundColor="{Binding Theme.Accent}"
+                                        TextColor="{Binding Theme.BtnText}"
+                                        CornerRadius="8" FontSize="13" HorizontalOptions="Start"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer -->
+        <Frame Grid.Row="2" BackgroundColor="{Binding Theme.Card}" Padding="12" CornerRadius="12"
+               BorderColor="{Binding Theme.Accent}">
+            <Label Text="RimWorld Mod Manager v3 beta"
+                   TextColor="{Binding Theme.TextMuted}"
+                   FontSize="13" HorizontalOptions="Center" FontAttributes="Italic"/>
+        </Frame>
+
+    </Grid>
+</ContentPage>
