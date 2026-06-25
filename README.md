@@ -62,17 +62,14 @@
 - Локальное хранение (JSON + Preferences)
 - Неоновый UI + анимации
 
-text---
-text---
 ## 📁 Структура проекта
 RimworldModManager/
-Pages/              → Главные экраны
-ViewModels/         → Логика и данные
-Services/           → SteamApi, Github, Theme, ModFolder и др.
-Converters/         → GreaterThanZero, InverseBool
-Extensions/         → Анимации кнопок
-Resources/          → Стили, цвета, иконки
----
+- Pages/ → Главные экраны
+- ViewModels/ → Логика и данные
+- Services/ → SteamApi, Github, Theme, ModFolder и др.
+- Converters/ → GreaterThanZero, InverseBool
+- Extensions/ → Анимации кнопок
+- Resources/ → Стили, цвета, иконки
 
 ## 🚀 Как запустить
 
