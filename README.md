@@ -63,7 +63,7 @@
 - Неоновый UI + анимации
 
 text---
----text
+text---
 ## 📁 Структура проекта
 RimworldModManager/
 Pages/              → Главные экраны
