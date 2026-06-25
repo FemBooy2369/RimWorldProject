@@ -59,7 +59,7 @@
 - MVVM архитектура
 - Steam Web API + GitHub API
 - Локальное хранение (JSON + Preferences)
-- Неоновый UI + анимации
+- 4 темы UI + анимации
 
 ## 📁 Структура проекта
 RimworldModManager/
